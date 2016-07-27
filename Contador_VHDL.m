@@ -1,0 +1,42 @@
+function [x] = Contador_VHDL()
+% Apertura de archivo VHDL
+fid = fopen('Contador_Ascendente_Hold_Clear.vhd','wt');
+fprintf(fid,'library ieee;\n\n');
+fprintf(fid,'use IEEE.std_logic_1164.all;\n');
+fprintf(fid,'use IEEE.std_logic_unsigned.all;\n\n');
+fprintf(fid,'entity Contador_Ascendente_Hold_Clear is\n');
+fprintf(fid,'\tgeneric(\n');
+fprintf(fid,'\tN: integer\t:= 8\n\t);\n');
+fprintf(fid,'\tport(\n');
+fprintf(fid,'\tCLK:\tin std_logic;\n');
+fprintf(fid,'\tRST:\tin std_logic;\n');
+fprintf(fid,'\tOPC:\tin std_logic_vector(1 downto 0);\n');
+fprintf(fid,'\tQ  :\tout std_logic_vector(N-1 downto 0)\n\t);\n');
+fprintf(fid,'end Contador_Ascendente_Hold_Clear;\n\n');
+fprintf(fid,'architecture Contador of Contador_Ascendente_Hold_Clear is\n');
+fprintf(fid,'signal Qp,Qn:std_logic_vector(N-1 downto 0);\n');
+fprintf(fid,'begin\n\n');
+fprintf(fid,'\tCombinacional: process(Qp,OPC)\n');
+fprintf(fid,'\tbegin\n');
+fprintf(fid,'\t\tcase OPC is\n');
+fprintf(fid,'\t\t\twhen "00" =>\n');
+fprintf(fid,'\t\t\t\tQn <= Qp;\n');
+fprintf(fid,'\t\t\twhen "01" =>\n');
+fprintf(fid,'\t\t\t\tQn <= Qp+1;\n');
+fprintf(fid,'\t\t\twhen others =>\n');
+fprintf(fid,'\t\t\t\tQn <= (others => %c0%c);\n','''','''');
+fprintf(fid,'\t\tend case;\n');
+fprintf(fid,'\t\tQ <= Qp;\n');
+fprintf(fid,'\tend process Combinacional;\n\n');
+fprintf(fid,'\tSecuencial: process(CLK,RST)\n');
+fprintf(fid,'\tbegin\n');
+fprintf(fid,'\t\tif (RST=%c0%c) then\n','''','''');
+fprintf(fid,'\t\t\tQp <= (others => %c0%c);\n','''','''');
+fprintf(fid,'\t\telsif (CLK%cevent and CLK=%c1%c) then\n','''','''','''');
+fprintf(fid,'\t\t\tQp <= Qn;\n');
+fprintf(fid,'\t\tend if;\n');
+fprintf(fid,'\tend process Secuencial;\n\n');
+fprintf(fid,'end Contador;');
+fclose(fid);
+x=1;
+end
